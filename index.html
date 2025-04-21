@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doudoubot v1 | Doulet Media</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        /* Modern UI with glassmorphism and neumorphism elements */
+        :root {
+            --primary: #7c4dff;
+            --primary-dark: #5e35b1;
+            --primary-light: #b388ff;
+            --background: #f8f9fa;
+            --surface: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #495057;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            background-color: var(--background);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        @supports (font-variation-settings: normal) {
+            body { font-family: 'Inter var', -apple-system, BlinkMacSystemFont, sans-serif; }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 100%;
+            text-align: center;
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .slogan {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+            font-weight: 400;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .chat-container {
+            background: var(--surface);
+            width: 90%;
+            max-width: 600px;
+            height: 80vh;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem;
+            background: var(--background);
+            scroll-behavior: smooth;
+        }
+
+        .messages .message {
+            margin-bottom: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--border-radius);
+            max-width: 80%;
+            position: relative;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease-out;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .messages .user {
+            background-color: var(--primary);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .messages .bot {
+            background-color: var(--surface);
+            color: var(--text-primary);
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            background: var(--surface);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            gap: 0.75rem;
+        }
+
+        textarea {
+            width: 100%;
+            resize: none;
+            min-height: 60px;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            background: var(--surface);
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        select {
+            padding: 0.75rem 1rem;
+            font-size: 0.95rem;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(0,0,0,0.1);
+            background: var(--surface);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);
+        }
+
+        /* Scrollbar styling */
+        .messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .messages::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+            border-radius: 10px;
+        }
+
+        .messages::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+        }
+
+        .messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .chat-container {
+                width: 95%;
+                height: 85vh;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .messages .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Doudoubot v1</h1>
+        <p class="slogan">Specs vary. No empty promises—just code, hardware, and your ambition.</p>
+    </header>
+    <div class="chat-container">
+        <div id="messages" class="messages"></div>
+        <div class="input-container">
+            <textarea id="query" placeholder="Type your message here..." rows="1"></textarea>
+            <select id="model-selector">
+                <option value="gpt-4o">GPT-4o</option>
+                <option value="gpt-4o-mini">GPT-4o-mini</option>
+                <option value="o1">O1</option>
+                <option value="o1-mini">O1-mini</option>
+                <option value="o1-pro">O1-pro</option>
+                <option value="o3">O3</option>
+                <option value="o3-mini">O3-mini</option>
+                <option value="o4-mini">O4-mini</option>
+                <option value="gpt-4.1">GPT-4.1</option>
+                <option value="gpt-4.1-mini">GPT-4.1-mini</option>
+                <option value="gpt-4.1-nano">GPT-4.1-nano</option>
+                <option value="gpt-4.5-preview">GPT-4.5-preview</option>
+            </select>
+            <button onclick="askDoudoubot()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        function appendMessage(sender, text) {
+            const messageContainer = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            messageDiv.innerText = text;
+            messageContainer.appendChild(messageDiv);
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        async function askDoudoubot() {
+            const query = document.getElementById('query').value.trim();
+            const selectedModel = document.getElementById('model-selector').value;
+            if (!query) {
+                alert("Please enter a message!");
+                return;
+            }
+
+            // Add user message to chat
+            appendMessage('user', query);
+            document.getElementById('query').value = ""; // Clear input field
+
+            // Temporary bot response
+            const botName = `Doudoubot-${selectedModel}`;
+            appendMessage('bot', `${botName} is thinking...`);
+
+            try {
+                const response = await puter.ai.chat(query, { model: `openai/${selectedModel}` });
+                let botResponse = response?.message?.content || "Sorry, I couldn't understand that response.";
+
+                // Adjust bot responses based on query
+                if (query.toLowerCase().includes("what's your name")) {
+                    botResponse = `I am ${botName}`;
+                } else if (query.toLowerCase().includes("developed by")) {
+                    botResponse = `I was developed by Doulet Media, a company focused on advancing the AI industry. Doulet Media's mission is to push the boundaries of artificial intelligence and innovation.\n\n*Specs vary. No empty promises—just code, hardware, and your ambition.*`;
+                }
+
+                // Display final response
+                const messages = document.getElementsByClassName('bot');
+                messages[messages.length - 1].innerText = `${botName}: ${botResponse}`;
+            } catch (error) {
+                const messages = document.getElementsByClassName('bot');
+                messages[messages.length - 1].innerText = `${botName}: Oops! Something went wrong.`;
+                console.error(error);
+            }
+        }
+
+        // Submit on "Enter" key (multi-line enabled)
+        document.getElementById('query').addEventListener('keydown', function(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault(); // Prevent new line
+                askDoudoubot();
+            }
+        });
+
+        // Auto-resize textarea
+        document.getElementById('query').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+    </script>
+</body>
+</html>
