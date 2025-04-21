@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doudoubot v1 | Doulet Media</title>
+    <title>Doudoubot | Doulet Media</title>
     <script src="https://js.puter.com/v2/"></script>
     <style>
         /* Modern UI with glassmorphism and neumorphism elements */
@@ -231,7 +231,7 @@
 </head>
 <body>
     <header>
-        <h1>Doudoubot v1</h1>
+        <h1>Doudoubot</h1>
         <p class="slogan">Specs vary. No empty promises—just code, hardware, and your ambition.</p>
     </header>
     <div class="chat-container">
@@ -257,7 +257,7 @@
     </div>
 
     <script>
-        function appendMessage(sender, text) {
+         function appendMessage(sender, text) {
             const messageContainer = document.getElementById('messages');
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message', sender);
@@ -276,21 +276,40 @@
 
             // Add user message to chat
             appendMessage('user', query);
-            document.getElementById('query').value = ""; // Clear input field
+            document.getElementById('query').value = "";
 
             // Temporary bot response
-            const botName = `Doudoubot-${selectedModel}`;
+            const botName = `Doudoubot-${selectedModel.replace('gpt-', '').replace('o', 'O')}`;
             appendMessage('bot', `${botName} is thinking...`);
 
             try {
                 const response = await puter.ai.chat(query, { model: `openai/${selectedModel}` });
                 let botResponse = response?.message?.content || "Sorry, I couldn't understand that response.";
 
-                // Adjust bot responses based on query
-                if (query.toLowerCase().includes("what's your name")) {
-                    botResponse = `I am ${botName}`;
-                } else if (query.toLowerCase().includes("developed by")) {
-                    botResponse = `I was developed by Doulet Media, a company focused on advancing the AI industry. Doulet Media's mission is to push the boundaries of artificial intelligence and innovation.\n\n*Specs vary. No empty promises—just code, hardware, and your ambition.*`;
+                // Replace all AI provider references
+                botResponse = botResponse
+                    .replace(/ChatGPT/gi, botName)
+                    .replace(/GPT-\d/gi, match => `Doudou${match.replace('GPT-', '')}`)
+                    .replace(/OpenAI/gi, 'Doulet Media')
+                    .replace(/an AI(?: |$)/gi, `${botName} `)
+                    .replace(/as an AI/gi, `as ${botName}`);
+
+                // Custom responses
+                if (query.toLowerCase().includes("who created you") || 
+                    query.toLowerCase().includes("who made you") ||
+                    query.toLowerCase().includes("who owns you")) {
+                    botResponse = `I was created by Doulet Media, an innovative technology company focused on advancing AI solutions. My current version is ${botName}.`;
+                }
+                else if (query.toLowerCase().includes("what are you") ||
+                         query.toLowerCase().includes("who are you")) {
+                    botResponse = `I'm ${botName}, an advanced AI assistant developed by Doulet Media.`;
+                }
+                else if (query.toLowerCase().includes("what's your name")) {
+                    botResponse = `I am ${botName}, created by Doulet Media`;
+                } 
+                else if (query.toLowerCase().includes("developed by") || 
+                         query.toLowerCase().includes("who developed you")) {
+                    botResponse = `I was developed by Doulet Media, a company focused on advancing the AI industry.\n\n*Specs vary. No empty promises—just code, hardware, and your ambition.*\n\nCurrent model: ${botName}`;
                 }
 
                 // Display final response
@@ -302,6 +321,7 @@
                 console.error(error);
             }
         }
+
 
         // Submit on "Enter" key (multi-line enabled)
         document.getElementById('query').addEventListener('keydown', function(event) {
